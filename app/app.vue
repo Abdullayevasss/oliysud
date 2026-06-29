@@ -223,7 +223,7 @@ step.value++
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f3f5f8]">
+  <div class="min-h-screen bg-red-500">
     <!-- HEADER -->
     <header class="bg-white shadow-sm">
       <div class="max-w-6xl mx-auto flex flex-col gap-2 py-6 items-center text-center">
@@ -267,7 +267,7 @@ step.value++
 
             <div
               v-if="n < 6"
-              class="w-9 h-[3px]"
+              class="w-9 h-1"
               :class="n < step ? 'bg-blue-500' : 'bg-gray-400'"
             />
 
@@ -291,7 +291,6 @@ step.value++
     </h2>
   </div>
 
-  <h1>salom</h1>
 
   <div class="p-6 grid md:grid-cols-2 gap-5">
 
