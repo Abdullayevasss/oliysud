@@ -223,7 +223,7 @@ step.value++
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-red-500">
     <!-- HEADER -->
     <header class="bg-white shadow-sm">
       <div class="max-w-6xl mx-auto flex flex-col gap-2 py-6 items-center text-center">
