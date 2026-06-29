@@ -18,6 +18,27 @@ const courts4 = computed(() => {
 })
 
 
+const selectedFile = ref(null)
+const fileError = ref('')
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0]
+
+  if (!file) return
+
+  const maxSize = 10 * 1024 * 1024 // 10 MB
+
+  if (file.size > maxSize) {
+    fileError.value = "Fayl hajmi 10 MB dan oshmasligi kerak."
+    selectedFile.value = null
+    event.target.value = "" // inputni tozalash
+    return
+  }
+
+  fileError.value = ""
+  selectedFile.value = file
+}
+
 // STEP
 const step = ref(1)
 
@@ -67,7 +88,6 @@ const step5Error = ref(false)
 
 // STEP 6
 const appealText = ref('')
-const selectedFile = ref(null)
 
 const step6Error = ref(false)
 const formCompleted = ref(false)
@@ -79,9 +99,6 @@ const districtList = computed(() => {
   return districts[selectedRegion.value] || []
 })
 
-const handleFileUpload = (event) => {
-  selectedFile.value = event.target.files[0]
-}
 
 // Viloyatga mos tumanlar
 const filteredDistricts = computed(() => {
@@ -148,9 +165,9 @@ if (step.value === 3) {
     partyType.value
 
   const personFields =
-    caseFirstName.value &&
-    caseLastName.value &&
-    caseMiddleName.value &&
+    caseFirstName.value.trim() &&
+    caseLastName.value.trim() &&
+    caseMiddleName.value.trim() &&
     caseNumber.value
 
   if (!mainFields) {
@@ -569,7 +586,7 @@ type="email"
       placeholder="Ismi"
       :class="[
         'w-full py-3 px-4 rounded-lg border',
-        step3Error && !caseFirstName
+     step3Error && !(caseFirstName || '').trim()
           ? 'border-red-500'
           : 'border-gray-300'
       ]"
@@ -584,7 +601,7 @@ type="email"
       placeholder="Familiyasi"
       :class="[
         'w-full py-3 px-4 rounded-lg border',
-        step3Error && !caseLastName
+        step3Error && !(caseLastName || '').trim()
           ? 'border-red-500'
           : 'border-gray-300'
       ]"
@@ -599,7 +616,7 @@ type="email"
       placeholder="Sharifi"
       :class="[
         'w-full py-3 px-4 rounded-lg border',
-        step3Error && !caseMiddleName
+        step3Error && !(caseMiddleName || '').trim()
           ? 'border-red-500'
           : 'border-gray-300'
       ]"
@@ -659,6 +676,12 @@ type="email"
   <select
     v-model="selectedRegion"
     @change="courtRegion = ''"
+     :class="[
+      'w-full py-3 px-4 rounded-lg border',
+      step3Error && !selectedRegion
+        ? 'border-red-500'
+        : 'border-gray-300'
+    ]"
     class="w-full py-3 px-4 rounded-lg border border-gray-300"
   >
     <option value="">
@@ -697,7 +720,7 @@ type="email"
     <option
       v-for="district in districtList"
       :key="district"
-      :value="district + ' тумани суди'"
+      :value="district + ' tumani sudi'"
     >
       {{ district }} tuman sudi
     </option>
@@ -967,35 +990,44 @@ type="email"
       Murojaatning qisqacha mazmuni
     </label>
 
-    <textarea
-      v-model="appealText"
-      rows="5"
-      :class="[
-        'w-full border rounded-lg p-4 outline-none',
-        step6Error && !appealText.trim()
-          ? 'border-red-500'
-          : 'border-gray-300'
-      ]"
-    />
+ <div>
+  <textarea
+    v-model="appealText"
+    rows="8"
+    maxlength="500"
+    :class="[
+      'w-full border rounded-lg p-4 outline-none resize-none',
+      step6Error && !appealText.trim()
+        ? 'border-red-500'
+        : 'border-gray-300'
+    ]"
+    placeholder="Murojaatingizni kiriting..."
+  ></textarea>
+
+  <div class="flex justify-end mt-1 text-sm text-gray-500">
+    {{ appealText.length }}/500
+  </div>
+</div>
 
     <div class="mt-8">
+<label class="block mb-3 font-medium text-gray-700">
+  Hujjat yuklash
+</label>
 
-      <label class="block mb-3 font-medium text-gray-700">
-        Hujjat yuklash
-      </label>
+<input
+  type="file"
+  @change="handleFileUpload"
+  class="w-full border rounded-lg p-4"
+  :class="[
+    step6Error && !selectedFile
+      ? 'border-red-500'
+      : 'border-gray-300'
+  ]"
+/>
 
-      <input
-
-        type="file"
-        @change="handleFileUpload"
-        
-        class="w-full  border rounded-lg p-4"
-        :class="[
-          step6Error && !selectedFile
-            ? 'border-red-500'
-            : 'border-gray-300'
-        ]"
-      />
+<p v-if="fileError" class="text-red-500 text-sm mt-2">
+  {{ fileError }}
+</p>
 
       <p
         v-if="selectedFile"
